@@ -1881,7 +1881,7 @@ void SpirvShaderTranslator::ProcessTextureFetchInstruction(
         offset_y += instr.attributes.offset_y < 0 ? -0.5f : 0.5f;
         offset_z += instr.attributes.offset_z < 0 ? -0.5f : 0.5f;
 
-        Id offset = 0;
+        Id offset;
         switch (instr.dimension) {
           case TextureDimension::k1D: {
             // https://msdn.microsoft.com/en-us/library/windows/desktop/bb944006.aspx
@@ -1903,6 +1903,7 @@ void SpirvShaderTranslator::ProcessTextureFetchInstruction(
                                  b.makeIntConstant(int(offset_y)),
                                  b.makeIntConstant(int(offset_z))});
           } break;
+          default: { offset = 0; }
         }
         // FIXME(Triang3l): There was offset code for cubemaps back when they
         // didn't work. It was the same as for 3D, but DrChat wasn't sure if
