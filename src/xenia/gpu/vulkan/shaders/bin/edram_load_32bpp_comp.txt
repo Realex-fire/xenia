@@ -1,0 +1,135 @@
+; SPIR-V
+; Version: 1.0
+; Generator: Khronos Glslang Reference Front End; 7
+; Bound: 87
+; Schema: 0
+               OpCapability Shader
+          %1 = OpExtInstImport "GLSL.std.450"
+               OpMemoryModel Logical GLSL450
+               OpEntryPoint GLCompute %main "main" %gl_WorkGroupID %gl_LocalInvocationID %gl_GlobalInvocationID
+               OpExecutionMode %main LocalSize 40 16 1
+               OpSource GLSL 450
+               OpSourceExtension "GL_ARB_compute_shader"
+               OpSourceExtension "GL_ARB_separate_shader_objects"
+               OpSourceExtension "GL_ARB_shader_image_load_store"
+               OpSourceExtension "GL_ARB_shading_language_420pack"
+               OpName %main "main"
+               OpName %tile_index "tile_index"
+               OpName %push_consts_type "push_consts_type"
+               OpMemberName %push_consts_type 0 "edram_offset_tiles"
+               OpMemberName %push_consts_type 1 "edram_pitch_tiles"
+               OpMemberName %push_consts_type 2 "rt_offset_px"
+               OpName %push_constants "push_constants"
+               OpName %gl_WorkGroupID "gl_WorkGroupID"
+               OpName %edram_coord "edram_coord"
+               OpName %gl_LocalInvocationID "gl_LocalInvocationID"
+               OpName %pixel "pixel"
+               OpName %edram "edram"
+               OpName %rt "rt"
+               OpName %gl_GlobalInvocationID "gl_GlobalInvocationID"
+               OpMemberDecorate %push_consts_type 0 Offset 0
+               OpMemberDecorate %push_consts_type 1 Offset 4
+               OpMemberDecorate %push_consts_type 2 Offset 8
+               OpDecorate %push_consts_type Block
+               OpDecorate %gl_WorkGroupID BuiltIn WorkgroupId
+               OpDecorate %gl_LocalInvocationID BuiltIn LocalInvocationId
+               OpDecorate %edram DescriptorSet 0
+               OpDecorate %edram Binding 0
+               OpDecorate %edram NonWritable
+               OpDecorate %rt DescriptorSet 0
+               OpDecorate %rt Binding 1
+               OpDecorate %rt NonReadable
+               OpDecorate %gl_GlobalInvocationID BuiltIn GlobalInvocationId
+               OpDecorate %gl_WorkGroupSize BuiltIn WorkgroupSize
+       %void = OpTypeVoid
+          %3 = OpTypeFunction %void
+       %uint = OpTypeInt 32 0
+%_ptr_Function_uint = OpTypePointer Function %uint
+     %v2uint = OpTypeVector %uint 2
+%push_consts_type = OpTypeStruct %uint %uint %v2uint
+%_ptr_PushConstant_push_consts_type = OpTypePointer PushConstant %push_consts_type
+%push_constants = OpVariable %_ptr_PushConstant_push_consts_type PushConstant
+        %int = OpTypeInt 32 1
+      %int_0 = OpConstant %int 0
+%_ptr_PushConstant_uint = OpTypePointer PushConstant %uint
+     %v3uint = OpTypeVector %uint 3
+%_ptr_Input_v3uint = OpTypePointer Input %v3uint
+%gl_WorkGroupID = OpVariable %_ptr_Input_v3uint Input
+     %uint_1 = OpConstant %uint 1
+%_ptr_Input_uint = OpTypePointer Input %uint
+      %int_1 = OpConstant %int 1
+     %uint_0 = OpConstant %uint 0
+%_ptr_Function_v3uint = OpTypePointer Function %v3uint
+    %uint_15 = OpConstant %uint 15
+      %int_4 = OpConstant %int 4
+    %uint_80 = OpConstant %uint 80
+    %uint_16 = OpConstant %uint 16
+         %46 = OpConstantComposite %v3uint %uint_80 %uint_16 %uint_0
+%gl_LocalInvocationID = OpVariable %_ptr_Input_v3uint Input
+    %uint_40 = OpConstant %uint 40
+     %v4uint = OpTypeVector %uint 4
+%_ptr_Function_v4uint = OpTypePointer Function %v4uint
+         %63 = OpTypeImage %uint 2D 0 1 0 2 R32ui
+%_ptr_UniformConstant_63 = OpTypePointer UniformConstant %63
+      %edram = OpVariable %_ptr_UniformConstant_63 UniformConstant
+      %v3int = OpTypeVector %int 3
+         %71 = OpTypeImage %uint 2D 0 0 0 2 R32ui
+%_ptr_UniformConstant_71 = OpTypePointer UniformConstant %71
+         %rt = OpVariable %_ptr_UniformConstant_71 UniformConstant
+%gl_GlobalInvocationID = OpVariable %_ptr_Input_v3uint Input
+      %int_2 = OpConstant %int 2
+%_ptr_PushConstant_v2uint = OpTypePointer PushConstant %v2uint
+      %v2int = OpTypeVector %int 2
+%gl_WorkGroupSize = OpConstantComposite %v3uint %uint_40 %uint_16 %uint_1
+       %main = OpFunction %void None %3
+          %5 = OpLabel
+ %tile_index = OpVariable %_ptr_Function_uint Function
+%edram_coord = OpVariable %_ptr_Function_v3uint Function
+      %pixel = OpVariable %_ptr_Function_v4uint Function
+         %16 = OpAccessChain %_ptr_PushConstant_uint %push_constants %int_0
+         %17 = OpLoad %uint %16
+         %23 = OpAccessChain %_ptr_Input_uint %gl_WorkGroupID %uint_1
+         %24 = OpLoad %uint %23
+         %26 = OpAccessChain %_ptr_PushConstant_uint %push_constants %int_1
+         %27 = OpLoad %uint %26
+         %28 = OpIMul %uint %24 %27
+         %29 = OpIAdd %uint %17 %28
+         %31 = OpAccessChain %_ptr_Input_uint %gl_WorkGroupID %uint_0
+         %32 = OpLoad %uint %31
+         %33 = OpShiftRightLogical %uint %32 %int_1
+         %34 = OpIAdd %uint %29 %33
+               OpStore %tile_index %34
+         %37 = OpLoad %uint %tile_index
+         %39 = OpBitwiseAnd %uint %37 %uint_15
+         %40 = OpLoad %uint %tile_index
+         %42 = OpShiftRightLogical %uint %40 %int_4
+         %43 = OpCompositeConstruct %v3uint %39 %42 %uint_0
+         %47 = OpIMul %v3uint %43 %46
+         %49 = OpLoad %v3uint %gl_LocalInvocationID
+         %50 = OpIAdd %v3uint %47 %49
+               OpStore %edram_coord %50
+         %51 = OpAccessChain %_ptr_Input_uint %gl_WorkGroupID %uint_0
+         %52 = OpLoad %uint %51
+         %53 = OpBitwiseAnd %uint %52 %uint_1
+         %55 = OpIMul %uint %53 %uint_40
+         %56 = OpAccessChain %_ptr_Function_uint %edram_coord %uint_0
+         %57 = OpLoad %uint %56
+         %58 = OpIAdd %uint %57 %55
+         %59 = OpAccessChain %_ptr_Function_uint %edram_coord %uint_0
+               OpStore %59 %58
+         %66 = OpLoad %63 %edram
+         %67 = OpLoad %v3uint %edram_coord
+         %69 = OpBitcast %v3int %67
+         %70 = OpImageRead %v4uint %66 %69
+               OpStore %pixel %70
+         %74 = OpLoad %71 %rt
+         %76 = OpLoad %v3uint %gl_GlobalInvocationID
+         %77 = OpVectorShuffle %v2uint %76 %76 0 1
+         %80 = OpAccessChain %_ptr_PushConstant_v2uint %push_constants %int_2
+         %81 = OpLoad %v2uint %80
+         %82 = OpIAdd %v2uint %77 %81
+         %84 = OpBitcast %v2int %82
+         %85 = OpLoad %v4uint %pixel
+               OpImageWrite %74 %84 %85
+               OpReturn
+               OpFunctionEnd

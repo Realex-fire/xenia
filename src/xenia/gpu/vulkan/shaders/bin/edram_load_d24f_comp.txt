@@ -1,0 +1,304 @@
+; SPIR-V
+; Version: 1.0
+; Generator: Khronos Glslang Reference Front End; 7
+; Bound: 207
+; Schema: 0
+               OpCapability Shader
+               OpCapability ImageBuffer
+               OpCapability StorageImageExtendedFormats
+          %1 = OpExtInstImport "GLSL.std.450"
+               OpMemoryModel Logical GLSL450
+               OpEntryPoint GLCompute %main "main" %gl_WorkGroupID %gl_LocalInvocationID %gl_GlobalInvocationID
+               OpExecutionMode %main LocalSize 40 16 1
+               OpSource GLSL 450
+               OpSourceExtension "GL_ARB_compute_shader"
+               OpSourceExtension "GL_ARB_separate_shader_objects"
+               OpSourceExtension "GL_ARB_shader_image_load_store"
+               OpSourceExtension "GL_ARB_shading_language_420pack"
+               OpName %main "main"
+               OpName %Float20e4To32_u1_ "Float20e4To32(u1;"
+               OpName %bits24 "bits24"
+               OpName %Float32To20e4_u1_ "Float32To20e4(u1;"
+               OpName %bits32 "bits32"
+               OpName %mantissa "mantissa"
+               OpName %exponent "exponent"
+               OpName %mantissa_lzcnt "mantissa_lzcnt"
+               OpName %tile_index "tile_index"
+               OpName %push_consts_type "push_consts_type"
+               OpMemberName %push_consts_type 0 "edram_offset_tiles"
+               OpMemberName %push_consts_type 1 "edram_pitch_tiles"
+               OpMemberName %push_consts_type 2 "buffer_pitch_px"
+               OpName %push_constants "push_constants"
+               OpName %gl_WorkGroupID "gl_WorkGroupID"
+               OpName %edram_coord "edram_coord"
+               OpName %gl_LocalInvocationID "gl_LocalInvocationID"
+               OpName %stencil_depth_guest "stencil_depth_guest"
+               OpName %edram "edram"
+               OpName %depth_guest "depth_guest"
+               OpName %depth_host "depth_host"
+               OpName %param "param"
+               OpName %param_0 "param"
+               OpName %pixel_index "pixel_index"
+               OpName %gl_GlobalInvocationID "gl_GlobalInvocationID"
+               OpName %buffer_depth "buffer_depth"
+               OpName %buffer_stencil "buffer_stencil"
+               OpMemberDecorate %push_consts_type 0 Offset 0
+               OpMemberDecorate %push_consts_type 1 Offset 4
+               OpMemberDecorate %push_consts_type 2 Offset 8
+               OpDecorate %push_consts_type Block
+               OpDecorate %gl_WorkGroupID BuiltIn WorkgroupId
+               OpDecorate %gl_LocalInvocationID BuiltIn LocalInvocationId
+               OpDecorate %edram DescriptorSet 0
+               OpDecorate %edram Binding 0
+               OpDecorate %edram NonWritable
+               OpDecorate %gl_GlobalInvocationID BuiltIn GlobalInvocationId
+               OpDecorate %buffer_depth DescriptorSet 0
+               OpDecorate %buffer_depth Binding 1
+               OpDecorate %buffer_depth NonReadable
+               OpDecorate %buffer_stencil DescriptorSet 0
+               OpDecorate %buffer_stencil Binding 2
+               OpDecorate %buffer_stencil NonReadable
+               OpDecorate %gl_WorkGroupSize BuiltIn WorkgroupSize
+       %void = OpTypeVoid
+          %3 = OpTypeFunction %void
+       %uint = OpTypeInt 32 0
+%_ptr_Function_uint = OpTypePointer Function %uint
+          %8 = OpTypeFunction %uint %_ptr_Function_uint
+%uint_1048575 = OpConstant %uint 1048575
+    %uint_20 = OpConstant %uint 20
+    %uint_15 = OpConstant %uint 15
+     %uint_0 = OpConstant %uint 0
+       %bool = OpTypeBool
+        %int = OpTypeInt 32 1
+     %int_20 = OpConstant %int 20
+     %uint_1 = OpConstant %uint 1
+%uint_4294967008 = OpConstant %uint 4294967008
+   %uint_120 = OpConstant %uint 120
+    %uint_23 = OpConstant %uint 23
+     %uint_3 = OpConstant %uint 3
+      %int_0 = OpConstant %int 0
+%int_1140850683 = OpConstant %int 1140850683
+%uint_1015021568 = OpConstant %uint 1015021568
+%uint_8388607 = OpConstant %uint 8388607
+%uint_8388608 = OpConstant %uint 8388608
+   %uint_121 = OpConstant %uint 121
+%uint_3288334336 = OpConstant %uint 3288334336
+%uint_16777215 = OpConstant %uint 16777215
+%push_consts_type = OpTypeStruct %uint %uint %uint
+%_ptr_PushConstant_push_consts_type = OpTypePointer PushConstant %push_consts_type
+%push_constants = OpVariable %_ptr_PushConstant_push_consts_type PushConstant
+%_ptr_PushConstant_uint = OpTypePointer PushConstant %uint
+     %v3uint = OpTypeVector %uint 3
+%_ptr_Input_v3uint = OpTypePointer Input %v3uint
+%gl_WorkGroupID = OpVariable %_ptr_Input_v3uint Input
+%_ptr_Input_uint = OpTypePointer Input %uint
+      %int_1 = OpConstant %int 1
+%_ptr_Function_v3uint = OpTypePointer Function %v3uint
+      %int_4 = OpConstant %int 4
+    %uint_80 = OpConstant %uint 80
+    %uint_16 = OpConstant %uint 16
+        %130 = OpConstantComposite %v3uint %uint_80 %uint_16 %uint_0
+%gl_LocalInvocationID = OpVariable %_ptr_Input_v3uint Input
+    %uint_40 = OpConstant %uint 40
+        %145 = OpTypeImage %uint 2D 0 1 0 2 R32ui
+%_ptr_UniformConstant_145 = OpTypePointer UniformConstant %145
+      %edram = OpVariable %_ptr_UniformConstant_145 UniformConstant
+      %v3int = OpTypeVector %int 3
+     %v4uint = OpTypeVector %uint 4
+     %uint_8 = OpConstant %uint 8
+     %uint_2 = OpConstant %uint 2
+%_ptr_Function_int = OpTypePointer Function %int
+%gl_GlobalInvocationID = OpVariable %_ptr_Input_v3uint Input
+      %int_2 = OpConstant %int 2
+        %190 = OpTypeImage %uint Buffer 0 0 0 2 R32ui
+%_ptr_UniformConstant_190 = OpTypePointer UniformConstant %190
+%buffer_depth = OpVariable %_ptr_UniformConstant_190 UniformConstant
+        %197 = OpTypeImage %uint Buffer 0 0 0 2 R8ui
+%_ptr_UniformConstant_197 = OpTypePointer UniformConstant %197
+%buffer_stencil = OpVariable %_ptr_UniformConstant_197 UniformConstant
+   %uint_255 = OpConstant %uint 255
+%gl_WorkGroupSize = OpConstantComposite %v3uint %uint_40 %uint_16 %uint_1
+       %main = OpFunction %void None %3
+          %5 = OpLabel
+ %tile_index = OpVariable %_ptr_Function_uint Function
+%edram_coord = OpVariable %_ptr_Function_v3uint Function
+%stencil_depth_guest = OpVariable %_ptr_Function_uint Function
+%depth_guest = OpVariable %_ptr_Function_uint Function
+ %depth_host = OpVariable %_ptr_Function_uint Function
+      %param = OpVariable %_ptr_Function_uint Function
+    %param_0 = OpVariable %_ptr_Function_uint Function
+%pixel_index = OpVariable %_ptr_Function_int Function
+        %103 = OpAccessChain %_ptr_PushConstant_uint %push_constants %int_0
+        %104 = OpLoad %uint %103
+        %109 = OpAccessChain %_ptr_Input_uint %gl_WorkGroupID %uint_1
+        %110 = OpLoad %uint %109
+        %112 = OpAccessChain %_ptr_PushConstant_uint %push_constants %int_1
+        %113 = OpLoad %uint %112
+        %114 = OpIMul %uint %110 %113
+        %115 = OpIAdd %uint %104 %114
+        %116 = OpAccessChain %_ptr_Input_uint %gl_WorkGroupID %uint_0
+        %117 = OpLoad %uint %116
+        %118 = OpShiftRightLogical %uint %117 %int_1
+        %119 = OpIAdd %uint %115 %118
+               OpStore %tile_index %119
+        %122 = OpLoad %uint %tile_index
+        %123 = OpBitwiseAnd %uint %122 %uint_15
+        %124 = OpLoad %uint %tile_index
+        %126 = OpShiftRightLogical %uint %124 %int_4
+        %127 = OpCompositeConstruct %v3uint %123 %126 %uint_0
+        %131 = OpIMul %v3uint %127 %130
+        %133 = OpLoad %v3uint %gl_LocalInvocationID
+        %134 = OpIAdd %v3uint %131 %133
+               OpStore %edram_coord %134
+        %135 = OpAccessChain %_ptr_Input_uint %gl_WorkGroupID %uint_0
+        %136 = OpLoad %uint %135
+        %137 = OpBitwiseAnd %uint %136 %uint_1
+        %139 = OpIMul %uint %137 %uint_40
+        %140 = OpAccessChain %_ptr_Function_uint %edram_coord %uint_0
+        %141 = OpLoad %uint %140
+        %142 = OpIAdd %uint %141 %139
+        %143 = OpAccessChain %_ptr_Function_uint %edram_coord %uint_0
+               OpStore %143 %142
+        %148 = OpLoad %145 %edram
+        %149 = OpLoad %v3uint %edram_coord
+        %151 = OpBitcast %v3int %149
+        %153 = OpImageRead %v4uint %148 %151
+        %154 = OpCompositeExtract %uint %153 0
+               OpStore %stencil_depth_guest %154
+        %156 = OpLoad %uint %stencil_depth_guest
+        %158 = OpShiftRightLogical %uint %156 %uint_8
+               OpStore %depth_guest %158
+        %160 = OpAccessChain %_ptr_Function_uint %edram_coord %uint_2
+               OpStore %160 %uint_1
+        %162 = OpLoad %145 %edram
+        %163 = OpLoad %v3uint %edram_coord
+        %164 = OpBitcast %v3int %163
+        %165 = OpImageRead %v4uint %162 %164
+        %166 = OpCompositeExtract %uint %165 0
+               OpStore %depth_host %166
+        %167 = OpLoad %uint %depth_guest
+        %169 = OpLoad %uint %depth_host
+               OpStore %param %169
+        %170 = OpFunctionCall %uint %Float32To20e4_u1_ %param
+        %171 = OpINotEqual %bool %167 %170
+               OpSelectionMerge %173 None
+               OpBranchConditional %171 %172 %173
+        %172 = OpLabel
+        %175 = OpLoad %uint %depth_guest
+               OpStore %param_0 %175
+        %176 = OpFunctionCall %uint %Float20e4To32_u1_ %param_0
+               OpStore %depth_host %176
+               OpBranch %173
+        %173 = OpLabel
+        %180 = OpAccessChain %_ptr_Input_uint %gl_GlobalInvocationID %uint_1
+        %181 = OpLoad %uint %180
+        %183 = OpAccessChain %_ptr_PushConstant_uint %push_constants %int_2
+        %184 = OpLoad %uint %183
+        %185 = OpIMul %uint %181 %184
+        %186 = OpAccessChain %_ptr_Input_uint %gl_GlobalInvocationID %uint_0
+        %187 = OpLoad %uint %186
+        %188 = OpIAdd %uint %185 %187
+        %189 = OpBitcast %int %188
+               OpStore %pixel_index %189
+        %193 = OpLoad %190 %buffer_depth
+        %194 = OpLoad %int %pixel_index
+        %195 = OpLoad %uint %depth_host
+        %196 = OpCompositeConstruct %v4uint %195 %195 %195 %195
+               OpImageWrite %193 %194 %196
+        %200 = OpLoad %197 %buffer_stencil
+        %201 = OpLoad %int %pixel_index
+        %202 = OpLoad %uint %stencil_depth_guest
+        %204 = OpBitwiseAnd %uint %202 %uint_255
+        %205 = OpCompositeConstruct %v4uint %204 %204 %204 %204
+               OpImageWrite %200 %201 %205
+               OpReturn
+               OpFunctionEnd
+%Float20e4To32_u1_ = OpFunction %uint None %8
+     %bits24 = OpFunctionParameter %_ptr_Function_uint
+         %11 = OpLabel
+   %mantissa = OpVariable %_ptr_Function_uint Function
+   %exponent = OpVariable %_ptr_Function_uint Function
+%mantissa_lzcnt = OpVariable %_ptr_Function_uint Function
+         %16 = OpLoad %uint %bits24
+         %18 = OpBitwiseAnd %uint %16 %uint_1048575
+               OpStore %mantissa %18
+         %20 = OpLoad %uint %bits24
+         %22 = OpShiftRightLogical %uint %20 %uint_20
+         %24 = OpBitwiseAnd %uint %22 %uint_15
+               OpStore %exponent %24
+         %25 = OpLoad %uint %exponent
+         %28 = OpIEqual %bool %25 %uint_0
+               OpSelectionMerge %30 None
+               OpBranchConditional %28 %29 %30
+         %29 = OpLabel
+         %31 = OpLoad %uint %mantissa
+         %32 = OpINotEqual %bool %31 %uint_0
+               OpSelectionMerge %34 None
+               OpBranchConditional %32 %33 %49
+         %33 = OpLabel
+         %38 = OpLoad %uint %mantissa
+         %39 = OpExtInst %int %1 FindUMsb %38
+         %40 = OpISub %int %int_20 %39
+         %41 = OpBitcast %uint %40
+               OpStore %mantissa_lzcnt %41
+         %43 = OpLoad %uint %mantissa_lzcnt
+         %44 = OpISub %uint %uint_1 %43
+               OpStore %exponent %44
+         %45 = OpLoad %uint %mantissa
+         %46 = OpLoad %uint %mantissa_lzcnt
+         %47 = OpShiftLeftLogical %uint %45 %46
+         %48 = OpBitwiseAnd %uint %47 %uint_1048575
+               OpStore %mantissa %48
+               OpBranch %34
+         %49 = OpLabel
+               OpStore %exponent %uint_4294967008
+               OpBranch %34
+         %34 = OpLabel
+               OpBranch %30
+         %30 = OpLabel
+         %51 = OpLoad %uint %exponent
+         %53 = OpIAdd %uint %51 %uint_120
+         %55 = OpShiftLeftLogical %uint %53 %uint_23
+         %56 = OpLoad %uint %mantissa
+         %58 = OpShiftLeftLogical %uint %56 %uint_3
+         %59 = OpBitwiseOr %uint %55 %58
+               OpReturnValue %59
+               OpFunctionEnd
+%Float32To20e4_u1_ = OpFunction %uint None %8
+     %bits32 = OpFunctionParameter %_ptr_Function_uint
+         %14 = OpLabel
+         %62 = OpLoad %uint %bits32
+         %63 = OpBitcast %int %62
+         %66 = OpExtInst %int %1 SClamp %63 %int_0 %int_1140850683
+         %67 = OpBitcast %uint %66
+               OpStore %bits32 %67
+         %68 = OpLoad %uint %bits32
+         %70 = OpULessThan %bool %68 %uint_1015021568
+               OpSelectionMerge %72 None
+               OpBranchConditional %70 %71 %83
+         %71 = OpLabel
+         %73 = OpLoad %uint %bits32
+         %75 = OpBitwiseAnd %uint %73 %uint_8388607
+         %77 = OpBitwiseOr %uint %75 %uint_8388608
+         %79 = OpLoad %uint %bits32
+         %80 = OpShiftRightLogical %uint %79 %uint_23
+         %81 = OpISub %uint %uint_121 %80
+         %82 = OpShiftRightLogical %uint %77 %81
+               OpStore %bits32 %82
+               OpBranch %72
+         %83 = OpLabel
+         %85 = OpLoad %uint %bits32
+         %86 = OpIAdd %uint %85 %uint_3288334336
+               OpStore %bits32 %86
+               OpBranch %72
+         %72 = OpLabel
+         %87 = OpLoad %uint %bits32
+         %88 = OpIAdd %uint %87 %uint_3
+         %89 = OpLoad %uint %bits32
+         %90 = OpShiftRightLogical %uint %89 %uint_3
+         %91 = OpBitwiseAnd %uint %90 %uint_1
+         %92 = OpIAdd %uint %88 %91
+         %93 = OpShiftRightLogical %uint %92 %uint_3
+         %95 = OpBitwiseAnd %uint %93 %uint_16777215
+               OpReturnValue %95
+               OpFunctionEnd

@@ -1,0 +1,129 @@
+; SPIR-V
+; Version: 1.0
+; Generator: Khronos Glslang Reference Front End; 7
+; Bound: 84
+; Schema: 0
+               OpCapability Shader
+          %1 = OpExtInstImport "GLSL.std.450"
+               OpMemoryModel Logical GLSL450
+               OpEntryPoint GLCompute %main "main" %gl_WorkGroupID %gl_LocalInvocationID
+               OpExecutionMode %main LocalSize 40 16 1
+               OpSource GLSL 450
+               OpSourceExtension "GL_ARB_compute_shader"
+               OpSourceExtension "GL_ARB_separate_shader_objects"
+               OpSourceExtension "GL_ARB_shader_image_load_store"
+               OpSourceExtension "GL_ARB_shading_language_420pack"
+               OpName %main "main"
+               OpName %tile_index "tile_index"
+               OpName %push_consts_type "push_consts_type"
+               OpMemberName %push_consts_type 0 "offset_tiles"
+               OpMemberName %push_consts_type 1 "pitch_tiles"
+               OpMemberName %push_consts_type 2 "color_high"
+               OpMemberName %push_consts_type 3 "color_low"
+               OpName %push_constants "push_constants"
+               OpName %gl_WorkGroupID "gl_WorkGroupID"
+               OpName %coord "coord"
+               OpName %gl_LocalInvocationID "gl_LocalInvocationID"
+               OpName %edram "edram"
+               OpMemberDecorate %push_consts_type 0 Offset 0
+               OpMemberDecorate %push_consts_type 1 Offset 4
+               OpMemberDecorate %push_consts_type 2 Offset 8
+               OpMemberDecorate %push_consts_type 3 Offset 12
+               OpDecorate %push_consts_type Block
+               OpDecorate %gl_WorkGroupID BuiltIn WorkgroupId
+               OpDecorate %gl_LocalInvocationID BuiltIn LocalInvocationId
+               OpDecorate %edram DescriptorSet 0
+               OpDecorate %edram Binding 0
+               OpDecorate %edram NonReadable
+               OpDecorate %gl_WorkGroupSize BuiltIn WorkgroupSize
+       %void = OpTypeVoid
+          %3 = OpTypeFunction %void
+       %uint = OpTypeInt 32 0
+%_ptr_Function_uint = OpTypePointer Function %uint
+%push_consts_type = OpTypeStruct %uint %uint %uint %uint
+%_ptr_PushConstant_push_consts_type = OpTypePointer PushConstant %push_consts_type
+%push_constants = OpVariable %_ptr_PushConstant_push_consts_type PushConstant
+        %int = OpTypeInt 32 1
+      %int_0 = OpConstant %int 0
+%_ptr_PushConstant_uint = OpTypePointer PushConstant %uint
+     %v3uint = OpTypeVector %uint 3
+%_ptr_Input_v3uint = OpTypePointer Input %v3uint
+%gl_WorkGroupID = OpVariable %_ptr_Input_v3uint Input
+     %uint_1 = OpConstant %uint 1
+%_ptr_Input_uint = OpTypePointer Input %uint
+      %int_1 = OpConstant %int 1
+     %uint_0 = OpConstant %uint 0
+%_ptr_Function_v3uint = OpTypePointer Function %v3uint
+    %uint_15 = OpConstant %uint 15
+      %int_4 = OpConstant %int 4
+    %uint_80 = OpConstant %uint 80
+    %uint_16 = OpConstant %uint 16
+         %44 = OpConstantComposite %v3uint %uint_80 %uint_16 %uint_0
+%gl_LocalInvocationID = OpVariable %_ptr_Input_v3uint Input
+         %60 = OpTypeImage %uint 2D 0 1 0 2 R32ui
+%_ptr_UniformConstant_60 = OpTypePointer UniformConstant %60
+      %edram = OpVariable %_ptr_UniformConstant_60 UniformConstant
+      %v3int = OpTypeVector %int 3
+      %int_2 = OpConstant %int 2
+     %v4uint = OpTypeVector %uint 4
+      %int_3 = OpConstant %int 3
+    %uint_40 = OpConstant %uint 40
+%gl_WorkGroupSize = OpConstantComposite %v3uint %uint_40 %uint_16 %uint_1
+       %main = OpFunction %void None %3
+          %5 = OpLabel
+ %tile_index = OpVariable %_ptr_Function_uint Function
+      %coord = OpVariable %_ptr_Function_v3uint Function
+         %15 = OpAccessChain %_ptr_PushConstant_uint %push_constants %int_0
+         %16 = OpLoad %uint %15
+         %22 = OpAccessChain %_ptr_Input_uint %gl_WorkGroupID %uint_1
+         %23 = OpLoad %uint %22
+         %25 = OpAccessChain %_ptr_PushConstant_uint %push_constants %int_1
+         %26 = OpLoad %uint %25
+         %27 = OpIMul %uint %23 %26
+         %28 = OpIAdd %uint %16 %27
+         %30 = OpAccessChain %_ptr_Input_uint %gl_WorkGroupID %uint_0
+         %31 = OpLoad %uint %30
+         %32 = OpIAdd %uint %28 %31
+               OpStore %tile_index %32
+         %35 = OpLoad %uint %tile_index
+         %37 = OpBitwiseAnd %uint %35 %uint_15
+         %38 = OpLoad %uint %tile_index
+         %40 = OpShiftRightLogical %uint %38 %int_4
+         %41 = OpCompositeConstruct %v3uint %37 %40 %uint_0
+         %45 = OpIMul %v3uint %41 %44
+               OpStore %coord %45
+         %47 = OpAccessChain %_ptr_Input_uint %gl_LocalInvocationID %uint_0
+         %48 = OpLoad %uint %47
+         %49 = OpShiftLeftLogical %uint %48 %int_1
+         %50 = OpAccessChain %_ptr_Function_uint %coord %uint_0
+         %51 = OpLoad %uint %50
+         %52 = OpIAdd %uint %51 %49
+         %53 = OpAccessChain %_ptr_Function_uint %coord %uint_0
+               OpStore %53 %52
+         %54 = OpAccessChain %_ptr_Input_uint %gl_LocalInvocationID %uint_1
+         %55 = OpLoad %uint %54
+         %56 = OpAccessChain %_ptr_Function_uint %coord %uint_1
+         %57 = OpLoad %uint %56
+         %58 = OpIAdd %uint %57 %55
+         %59 = OpAccessChain %_ptr_Function_uint %coord %uint_1
+               OpStore %59 %58
+         %63 = OpLoad %60 %edram
+         %64 = OpLoad %v3uint %coord
+         %66 = OpBitcast %v3int %64
+         %68 = OpAccessChain %_ptr_PushConstant_uint %push_constants %int_2
+         %69 = OpLoad %uint %68
+         %71 = OpCompositeConstruct %v4uint %69 %69 %69 %69
+               OpImageWrite %63 %66 %71
+         %72 = OpAccessChain %_ptr_Function_uint %coord %uint_0
+         %73 = OpLoad %uint %72
+         %74 = OpIAdd %uint %73 %int_1
+               OpStore %72 %74
+         %75 = OpLoad %60 %edram
+         %76 = OpLoad %v3uint %coord
+         %77 = OpBitcast %v3int %76
+         %79 = OpAccessChain %_ptr_PushConstant_uint %push_constants %int_3
+         %80 = OpLoad %uint %79
+         %81 = OpCompositeConstruct %v4uint %80 %80 %80 %80
+               OpImageWrite %75 %77 %81
+               OpReturn
+               OpFunctionEnd
